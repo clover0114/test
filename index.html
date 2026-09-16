@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CSVをブラウザだけで表示・絞り込みできる一時的な表計算ビューア">
-  <title>CSV一時ビューア</title>
+  <title>CSVチェッカー</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231b2430'/%3E%3Cpath d='M18 16h28v32H18z' fill='none' stroke='%235ce1b8' stroke-width='4'/%3E%3Cpath d='M18 27h28M18 38h28M31 16v32' stroke='%235ce1b8' stroke-width='3'/%3E%3C/svg%3E">
   <style>
     :root{--ink:#edf4f2;--muted:#a8b6b7;--bg:#10161c;--panel:#17212a;--panel2:#1d2a34;--line:#30414b;--accent:#5ce1b8;--accent2:#a4f2da;--danger:#ff8d87;--shadow:0 18px 50px rgba(0,0,0,.24)}
@@ -17,11 +17,14 @@
     .column-menu summary{font-size:0}.column-menu summary:before{content:"";display:block;width:17px;height:17px;background:currentColor;clip-path:polygon(0 10%,100% 10%,63% 53%,63% 88%,37% 100%,37% 53%)}.filter-icon{display:none}.menu-panel{position:fixed!important;top:auto;right:auto;z-index:9999!important;background:#142028;box-shadow:0 16px 35px rgba(0,0,0,.48)}th:has(.column-menu[open]){z-index:10000!important}
     @media(max-width:650px){.menu-panel{left:12px!important;right:12px!important;width:auto!important}}
   </style>
+  <style>
+    .topbar .actions{display:flex;align-items:center;gap:9px}.version{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 10px;white-space:nowrap}.dropzone{position:relative}.dropzone:before,.dropzone:after{content:'✦';position:absolute;opacity:0;color:var(--accent2);font-size:22px;pointer-events:none}.dropzone:before{left:25%;top:24%}.dropzone:after{right:25%;bottom:22%;font-size:15px}.dropzone:hover:before,.dropzone:hover:after{animation:twinkle .9s ease-in-out infinite alternate}.dropzone:hover:after{animation-delay:.2s}.dropzone:hover .choose{animation:soft-bounce 1.1s ease-in-out infinite}@keyframes twinkle{from{opacity:0;transform:translateY(5px) rotate(-12deg) scale(.7)}to{opacity:1;transform:translateY(-6px) rotate(12deg) scale(1.1)}}@keyframes soft-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  </style>
 </head>
 <body>
   <main class="app">
-    <header class="topbar"><div class="brand"><div class="mark" aria-hidden="true">▦</div><div><h1>CSV一時ビューア</h1><p>必要なときだけ、すばやく表にする</p></div></div><div class="privacy">● サーバー保存なし</div></header>
-    <section class="intro"><h2>CSVを、見やすい表に。</h2><p>ファイルをドロップするだけで表示できます。列ごとの絞り込みにも対応。データはこのブラウザ内だけで処理され、どこにも送信されません。</p></section>
+    <header class="topbar"><div class="brand"><div class="mark" aria-hidden="true">▦</div><div><h1>CSVチェッカー</h1><p>肥田木特製CSVビューア</p></div></div><div class="actions"><div class="privacy">● サーバー保存なし</div><div class="version">v1.3.0</div></div></header>
+    <section class="intro"><h2>CSVを、外部ツール無しで最速確認。</h2><p>ファイルをドロップするだけで表示できます。列ごとの絞り込みにも対応。データはこのブラウザ内だけで処理され、どこにも送信されません。</p></section>
     <section id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="CSVファイルを選択またはドロップ"><strong>CSVファイルをここにドロップ</strong><span>UTF-8 / Shift-JIS に対応</span><label class="choose">ファイルを選ぶ<input id="fileInput" type="file" accept=".csv,text/csv,application/vnd.ms-excel"></label><div id="error" class="error hidden"></div></section>
     <section id="workspace" class="workspace hidden" aria-live="polite"><div class="toolbar"><div class="file-info"><span class="file-name" id="fileName"></span><span class="stats" id="stats"></span></div><div class="actions"><button class="ghost" id="clearFilters">絞り込みを解除</button><button class="ghost" id="clearData">閉じる</button></div></div><div class="filterbar"><label for="globalSearch">全体検索</label><input class="global-search" id="globalSearch" type="search" placeholder="すべての列から検索…"><span class="active-filter" id="activeFilter"></span></div><div class="table-wrap" id="tableWrap"></div></section>
     <p class="note"><span class="dot"></span>このページを閉じると、読み込んだデータも消えます。履歴・Cookie・ローカルストレージは使用しません。</p>
